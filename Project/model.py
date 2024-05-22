@@ -6,6 +6,7 @@ from tensorflow.keras.optimizers import Adam, SGD
 from tensorflow.keras.applications import ResNet50, VGG16
 
 import keras_tuner as kt
+import tensorflow as tf
 
 class cnn_custom(kt.HyperModel):
 
@@ -167,7 +168,6 @@ class vgg16(kt.HyperModel):
         for layer in input.layers:
             layer.trainable = False
 
-       
         model.compile(
                     loss='binary_crossentropy',
                     optimizer=Adam(
@@ -194,7 +194,7 @@ class resNet50(kt.HyperModel):
         self.channels = channels
 
     def build(self, hp):
-        base_model = ResNet50(weights='imagenet', include_top=False, input_tensor=Input(shape=(IMG_SIZE,IMG_SIZE,3)))
+        base_model = ResNet50(weights='imagenet', include_top=False, input_tensor=Input(shape=(self.img_size, self.img_size, self.channels)))
         x = base_model.output
         x = GlobalAveragePooling2D()(x)
         x = Dense(256, activation='relu')(x)
